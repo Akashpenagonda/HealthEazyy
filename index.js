@@ -1,5 +1,5 @@
-  // Preloader
-  window.addEventListener('load', function() {
+ // Preloader
+ window.addEventListener('load', function() {
     const preloader = document.querySelector('.preloader');
     setTimeout(() => {
         preloader.classList.add('fade-out');
@@ -128,7 +128,7 @@ backToTopBtn.addEventListener('click', () => {
     });
 });
 
-// Video Player Functionality
+// Video Player Functionality with pause on scroll
 const videoContainer = document.querySelector('.video-container');
 const video = videoContainer.querySelector('video');
 const playButton = videoContainer.querySelector('.play-button');
@@ -184,6 +184,26 @@ video.addEventListener('pause', () => {
 // Click on video to toggle play/pause
 video.addEventListener('click', togglePlayPause);
 
+// Pause video when scrolled out of view
+function handleScroll() {
+    const rect = videoContainer.getBoundingClientRect();
+    const isVisible = (
+        rect.top >= 0 &&
+        rect.left >= 0 &&
+        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+        rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+    );
+
+    if (!isVisible && !video.paused) {
+        video.pause();
+        playButton.style.opacity = '1';
+        playButton.innerHTML = '<i class="fas fa-play"></i>';
+        playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+    }
+}
+
+window.addEventListener('scroll', handleScroll);
+
 // Smooth scrolling for anchor links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function(e) {
@@ -204,7 +224,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 
 // Animation on scroll
 function animateOnScroll() {
-    const elements = document.querySelectorAll('.service-card, .section-title, .video-container, .testimonial-slider, .faq-item, .before-after-row');
+    const elements = document.querySelectorAll('.service-card, .section-title, .video-container, .testimonial-slider, .faq-item, .before-after-row, .about-container');
     
     elements.forEach((element, index) => {
         const elementPosition = element.getBoundingClientRect().top;
@@ -219,12 +239,17 @@ function animateOnScroll() {
                 element.style.animationDelay = `${index * 0.1}s`;
                 element.classList.add('slide-up');
             }
+            
+            // Add animation for about section
+            if (element.classList.contains('about-container')) {
+                element.classList.add('fadeInUp');
+            }
         }
     });
 }
 
 // Set initial state for animated elements
-document.querySelectorAll('.service-card, .section-title, .video-container, .testimonial-slider, .faq-item, .before-after-row').forEach(element => {
+document.querySelectorAll('.service-card, .section-title, .video-container, .testimonial-slider, .faq-item, .before-after-row, .about-container').forEach(element => {
     element.style.opacity = '0';
     element.style.transform = 'translateY(20px)';
     element.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
@@ -300,3 +325,30 @@ document.querySelectorAll('.stat-item').forEach(stat => {
         stat.classList.remove('bounce');
     });
 });
+
+// Add animation to about image
+const aboutImage = document.querySelector('.about-image img');
+aboutImage.addEventListener('mouseenter', () => {
+    aboutImage.style.transform = 'perspective(1000px) rotateY(15deg) scale(1.05)';
+});
+
+aboutImage.addEventListener('mouseleave', () => {
+    aboutImage.style.transform = 'perspective(1000px) rotateY(0deg) scale(1)';
+});
+
+// Create floating icons for about section
+function createFloatingIcons() {
+    const icons = ['heart', 'leaf', 'apple-alt', 'dumbbell', 'heartbeat', 'spa', 'brain', 'running'];
+    const container = document.querySelector('.floating-icons');
+    
+    icons.forEach((icon, index) => {
+        const iconElement = document.createElement('i');
+        iconElement.className = `fas fa-${icon} floating-icon`;
+        iconElement.style.top = `${Math.random() * 90}%`;
+        iconElement.style.left = `${Math.random() * 90}%`;
+        iconElement.style.animationDelay = `${index * 0.5}s`;
+        container.appendChild(iconElement);
+    });
+}
+
+createFloatingIcons();
